@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Кольский: два маршрута к Баренцеву морю</title>
+<meta name="description" content="Териберка или Китовый берег: программа по дням, бюджет, сезон и что взять с собой. Рубрика «Путешествия по России», выпуск 01.">
+<meta property="og:title" content="Кольский: два маршрута к Баренцеву морю">
+<meta property="og:description" content="Программа по дням, калькулятор бюджета, сезон и чек-лист.">
+<meta name="theme-color" content="#F4EFE6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4EFE6; --paper-2:#EBE3D5; --ink:#1F2A44; --ink-soft:#4A5470;
+  --teal:#2FA7A0; --sea:#1F5E66; --sand:#E0A458; --clay:#C8553D; --line:#D6CBB8;
+  --head:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --hand:"Caveat","Comic Sans MS",cursive;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 var(--body);
+  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);
+  background-image:radial-gradient(rgba(31,42,68,.035) 1px,transparent 1px);background-size:5px 5px}
+img,svg{max-width:100%;display:block}
+a{color:var(--sea)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:6px}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--head);line-height:1.15;margin:0}
+h1{font-size:clamp(28px,7.4vw,44px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(22px,5.4vw,30px);font-weight:700;margin-bottom:14px}
+h3{font-size:18px;font-weight:500}
+.hand{font-family:var(--hand);font-weight:600;color:var(--sea);font-size:24px;line-height:1.1}
+p{margin:0 0 12px}
+section{padding:40px 0;border-top:1px dashed var(--line)}
+.muted{color:var(--ink-soft)}
+
+/* hero */
+.hero{padding:22px 0 8px}
+.hero .hand{margin-bottom:8px}
+.lead{font-size:18px;color:var(--ink-soft);margin-top:12px;max-width:34em}
+.map{margin:22px 0 6px;position:relative}
+.map svg{width:100%;height:auto}
+.route-path{fill:none;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:7 9}
+@media (prefers-reduced-motion:no-preference){
+  .draw{stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 2.6s ease-out .3s forwards}
+  .draw.late{animation-delay:1.2s}
+  .pop{opacity:0;animation:pop .5s ease-out forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes pop{to{opacity:1}}
+}
+.facts{display:flex;flex-wrap:wrap;gap:8px 18px;margin:8px 0 0;padding:0;list-style:none;font-weight:600}
+.facts li{display:flex;gap:6px;align-items:baseline}
+
+/* switch */
+.switch{position:sticky;top:0;z-index:5;background:var(--paper);padding:calc(10px + env(safe-area-inset-top,0px)) 0 10px;margin-top:-1px;border-bottom:1px solid var(--line)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--paper-2);padding:5px;border-radius:14px}
+.seg button{font:600 15px/1.2 var(--body);border:0;border-radius:10px;padding:11px 8px;background:transparent;color:var(--ink);cursor:pointer}
+.seg button small{display:block;font-weight:400;font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+.seg button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.seg button[aria-selected="true"] small{color:#C9CFDD}
+
+/* route summary */
+.sum{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:16px 0 4px;font-size:16px}
+.sum dt{color:var(--ink-soft)}
+.sum dd{margin:0;font-weight:600}
+.tag{display:inline-block;font-family:var(--hand);font-size:22px;color:var(--clay);transform:rotate(-2deg);margin:6px 0 0}
+
+/* days */
+.day{border-left:3px solid var(--route,var(--teal));margin:22px 0 0;padding:0 0 0 18px}
+.day h3{margin-bottom:10px}
+.day h3 span{display:block;font-family:var(--hand);font-size:22px;color:var(--route,var(--teal));font-weight:600;margin-bottom:2px}
+.slot{display:grid;grid-template-columns:58px 1fr;gap:4px 12px;padding:9px 0;border-bottom:1px dotted var(--line)}
+.slot:last-of-type{border-bottom:0}
+.slot time{font-weight:700;font-variant-numeric:tabular-nums;color:var(--sea)}
+.slot b{display:block}
+.slot p{margin:2px 0 0;font-size:15.5px;color:var(--ink-soft)}
+.slot .price{font-weight:700;color:var(--ink)}
+.slot a.ymap{font-size:14px;white-space:nowrap}
+.planb{margin:10px 0 0;padding:10px 14px;background:#fff8ec;border:1px solid #EED9B4;border-radius:12px;font-size:15px}
+.planb strong{color:var(--clay)}
+
+/* calculator */
+.calc{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dotted var(--line)}
+.row:last-child{border-bottom:0}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--ink);background:var(--paper);font:700 20px/1 var(--body);color:var(--ink);cursor:pointer}
+.stepper output{min-width:28px;text-align:center;font-weight:700;font-size:18px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 0;cursor:pointer}
+.opt input{width:22px;height:22px;margin-top:2px;accent-color:var(--sea);flex:none}
+.opt span small{display:block;color:var(--ink-soft);font-size:14px}
+select{font:600 15px var(--body);padding:8px 10px;border-radius:10px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);max-width:62%}
+.total{margin-top:16px;padding:16px;border-radius:14px;background:var(--ink);color:var(--paper)}
+.total .big{font-family:var(--head);font-size:30px;font-weight:700}
+.total .pp{color:#C9CFDD}
+.break{list-style:none;padding:0;margin:12px 0 0;font-size:15px}
+.break li{display:flex;justify-content:space-between;gap:12px;padding:4px 0;border-bottom:1px dotted rgba(244,239,230,.25)}
+.break li:last-child{border:0}
+.note{font-size:14px;color:var(--ink-soft);margin-top:10px}
+
+/* season */
+.season{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -20px;padding:0 20px}
+.cal{display:grid;grid-template-columns:104px repeat(12,minmax(26px,1fr));gap:3px;min-width:520px;font-size:13px;align-items:center}
+.cal .m{text-align:center;color:var(--ink-soft);font-weight:600}
+.cal .lab{font-weight:600;font-size:13.5px;padding-right:6px}
+.cal .c{height:20px;border-radius:5px;background:var(--paper-2)}
+.cal .on{background:var(--c)}
+.cal .best{background:var(--c);box-shadow:inset 0 0 0 2px var(--ink)}
+.legend{font-size:14px;color:var(--ink-soft);margin-top:10px}
+
+/* checklist */
+.check{list-style:none;padding:0;margin:0;columns:2 260px;column-gap:24px}
+.check li{break-inside:avoid}
+.check label{display:flex;gap:10px;padding:7px 0;cursor:pointer}
+.check input{width:22px;height:22px;accent-color:var(--teal);flex:none;margin-top:1px}
+.check input:checked+span{text-decoration:line-through;color:var(--ink-soft)}
+
+/* practical */
+details{border-bottom:1px dotted var(--line);padding:4px 0}
+summary{cursor:pointer;font-weight:700;padding:10px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:700 22px/1 var(--body);color:var(--sea)}
+details[open] summary::after{content:"−"}
+details p,details ul{font-size:16px;color:var(--ink-soft)}
+details ul{padding-left:20px;margin:0 0 12px}
+
+footer{padding:36px 0 48px;border-top:1px dashed var(--line)}
+.follow{display:inline-block;margin:6px 0 18px;padding:14px 22px;border-radius:999px;background:var(--teal);color:#fff;font-weight:700;text-decoration:none}
+.src{font-size:13.5px;color:var(--ink-soft)}
+.src a{color:var(--ink-soft)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="wrap hero">
+  <div class="hand">Путешествия по России, выпуск 01</div>
+  <h1>Кольский: два маршрута к Баренцеву морю</h1>
+  <p class="lead">Териберка — дешевле и людно. Китовый берег — дорого, тихо и без соседей. Ниже программа по дням, бюджет на вашу компанию, сезон и что взять.</p>
+
+  <div class="map" aria-label="Схема: Москва — Мурманск, дальше на восток в Териберку или на северо-запад на Китовый берег">
+    <svg viewBox="0 0 700 430" role="img">
+      <defs>
+        <filter id="wc" x="-10%" y="-10%" width="120%" height="120%">
+          <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="4"/>
+          <feDisplacementMap in="SourceGraphic" scale="9"/>
+          <feGaussianBlur stdDeviation=".6"/>
+        </filter>
+      </defs>
+      <!-- sea wash -->
+      <path filter="url(#wc)" d="M0 0H700V120C640 132 600 96 548 116 520 128 498 104 470 116 440 130 420 98 384 112 352 124 340 150 318 168 300 150 290 120 262 118 232 116 214 146 184 140 150 134 128 104 92 112 60 120 34 92 0 104Z" fill="#2FA7A0" opacity=".22"/>
+      <path filter="url(#wc)" d="M0 0H700V60C620 74 560 40 480 58 400 76 330 44 250 60 170 76 90 44 0 58Z" fill="#2FA7A0" opacity=".16"/>
+      <text x="350" y="42" text-anchor="middle" font-family="Caveat,cursive" font-size="38" fill="#1F5E66">Баренцево море</text>
+      <!-- Kola bay -->
+      <path filter="url(#wc)" d="M312 160C304 196 300 236 306 270" stroke="#2FA7A0" stroke-opacity=".45" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <!-- tundra dots -->
+      <g fill="#7A9E7E" opacity=".35">
+        <circle cx="120" cy="230" r="3"/><circle cx="160" cy="260" r="2.5"/><circle cx="520" cy="230" r="3"/><circle cx="560" cy="270" r="2.5"/><circle cx="470" cy="300" r="2"/><circle cx="210" cy="310" r="2"/>
+      </g>
+      <!-- Moscow -> Murmansk -->
+      <path class="route-path draw" d="M330 430C330 390 318 350 312 296" stroke="#1F2A44"/>
+      <!-- Murmansk -> Teriberka -->
+      <path class="route-path draw late" d="M312 286C380 266 450 214 560 150" stroke="#2FA7A0"/>
+      <!-- Murmansk -> Kitovy -->
+      <path class="route-path draw late" d="M306 286C250 260 200 214 150 150" stroke="#1F5E66"/>
+      <g class="pop" style="animation-delay:.2s">
+        <circle cx="312" cy="290" r="9" fill="#1F2A44"/>
+        <text x="330" y="326" font-family="Manrope,sans-serif" font-weight="700" font-size="30" fill="#1F2A44">Мурманск</text>
+        <text x="344" y="404" font-family="Caveat,cursive" font-size="32" fill="#4A5470">из Москвы ~2,5 ч ✈</text>
+      </g>
+      <g class="pop" style="animation-delay:2.4s">
+        <circle cx="560" cy="150" r="9" fill="#2FA7A0"/>
+        <text x="548" y="194" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="700" font-size="30" fill="#1F2A44">Териберка</text>
+        <text x="548" y="228" text-anchor="middle" font-family="Caveat,cursive" font-size="30" fill="#1F5E66">130 км · 2,5–3 ч</text>
+      </g>
+      <g class="pop" style="animation-delay:2.6s">
+        <circle cx="150" cy="150" r="9" fill="#1F5E66"/>
+        <text x="168" y="194" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="700" font-size="30" fill="#1F2A44">Китовый берег</text>
+        <text x="168" y="228" text-anchor="middle" font-family="Caveat,cursive" font-size="30" fill="#1F5E66">140 км · до 4 ч</text>
+      </g>
+    </svg>
+  </div>
+  <ul class="facts">
+    <li>✈ 2,5 ч из Москвы</li>
+    <li>от 4 300 ₽ в одну сторону</li>
+    <li>сезон: июнь — сентябрь</li>
+  </ul>
+</header>
+
+<div class="switch">
+  <div class="wrap">
+    <div class="seg" role="tablist" aria-label="Выберите маршрут">
+      <button role="tab" id="tab-t" aria-controls="route" aria-selected="true" data-r="t">Териберка<small>3 дня · бюджетно</small></button>
+      <button role="tab" id="tab-k" aria-controls="route" aria-selected="false" data-r="k">Китовый берег<small>4 дня · бутик</small></button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <section class="wrap" id="route" role="tabpanel" aria-live="polite"></section>
+
+  <section class="wrap" id="budget">
+    <h2>Сколько выйдет</h2>
+    <p class="muted">Посчитайте на свою компанию. Все цены — «от», реальная сумма зависит от дат.</p>
+    <div class="calc">
+      <div class="row"><span>Сколько человек</span>
+        <div class="stepper"><button type="button" data-step="people" data-d="-1" aria-label="Меньше людей">−</button><output id="people">2</output><button type="button" data-step="people" data-d="1" aria-label="Больше людей">+</button></div></div>
+      <div class="row"><span>Сколько ночей</span>
+        <div class="stepper"><button type="button" data-step="nights" data-d="-1" aria-label="Меньше ночей">−</button><output id="nights">2</output><button type="button" data-step="nights" data-d="1" aria-label="Больше ночей">+</button></div></div>
+      <div id="calc-opts"></div>
+      <div class="total" aria-live="polite">
+        <div class="big" id="sum">—</div>
+        <div class="pp" id="pp"></div>
+        <ul class="break" id="break"></ul>
+      </div>
+      <p class="note" id="calc-note"></p>
+    </div>
+  </section>
+
+  <section class="wrap" id="season">
+    <h2>Когда ехать</h2>
+    <div class="season"><div class="cal" id="cal"></div></div>
+    <p class="legend">Цветом отмечены месяцы, когда это бывает; с обводкой — лучшее время.</p>
+  </section>
+
+  <section class="wrap" id="pack">
+    <h2>Что взять</h2>
+    <p class="muted">Галочки сохраняются на этом телефоне.</p>
+    <ul class="check" id="check"></ul>
+  </section>
+
+  <section class="wrap" id="info">
+    <h2>Важно заранее</h2>
+    <details open><summary>Документы и разрешения</summary>
+      <ul>
+        <li><b>Природный парк «Териберка»</b> (водопад и пляж «Яйца дракона»): разрешение на дату визита, 500 ₽ для граждан РФ, 1 000 ₽ для иностранцев, детям до 14 лет и пенсионерам бесплатно. Оформляется онлайн на Единой платформе ООПТ Мурманской области. Без разрешения — штраф 5 000 ₽. Сами сёла Териберка и Лодейное в парк не входят.</li>
+        <li><b>Китовый берег</b> стоит на полуострове Средний, у границы с Норвегией. Нужны паспорт и разрешение на въезд в природный парк «Полуострова Рыбачий и Средний». Иностранцам документы подают за 35 дней до заезда, их готовит отдел бронирования отеля.</li>
+      </ul>
+    </details>
+    <details><summary>Связь и деньги</summary>
+      <ul>
+        <li>На Китовом береге мобильной связи нет, только спутниковый Wi-Fi. Скачайте офлайн-карты и предупредите близких.</li>
+        <li>В Териберке связь есть, но в тундре и у моря может пропадать. Возьмите немного наличных на случай, если терминал в кафе или у перевозчика не работает.</li>
+      </ul>
+    </details>
+    <details><summary>Что бронировать заранее</summary>
+      <ul>
+        <li>Жильё в Териберке на июль–август — за 1–2 месяца, его мало.</li>
+        <li>Выход в море и охоту на краба — до поездки. Группы маленькие, в сезон места разбирают.</li>
+        <li>Столики в кафе на вечер — в день приезда.</li>
+        <li>Автобус № 241Э — билеты заранее. Он ходит раз в день, после закрытия дороги на него ажиотаж.</li>
+      </ul>
+    </details>
+    <details><summary>Погода и дорога</summary>
+      <ul>
+        <li>Летом обычно прохладно, около +10…+15 °C, ветер и морось — обычное дело даже в июле. Одевайтесь слоями.</li>
+        <li>С октября по май дорогу в Териберку из-за метелей закрывают иногда на сутки и больше. Закладывайте запасной день и следите за прогнозом за неделю.</li>
+        <li>Выходы в море отменяют при сильном ветре. Не ставьте море на последний день.</li>
+      </ul>
+    </details>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="hand">Маршрут собрал Вадим — капитан на связи</div>
+  <p class="muted">Новые выпуски «Путешествий по России» и «по миру» — в Instagram.</p>
+  <a class="follow" href="https://www.instagram.com/vadimbespalov/" rel="noopener">Подписаться @vadimbespalov</a>
+  <p class="src">Цены проверены в октябре 2026 года по открытым источникам — агрегаторы авиабилетов, путеводители и СМИ о Териберке, сайт Китового берега, правила природного парка «Териберка» — и указаны «от». Перед поездкой уточняйте у организаторов.</p>
+</footer>
+
+<script>
+(function(){
+"use strict";
+const ymap = q => "https://yandex.ru/maps/?text=" + encodeURIComponent(q);
+const R = {
+ t:{
+  color:"#2FA7A0",
+  title:"Териберка, 3 дня",
+  intro:"Самое известное арктическое село России: кладбище кораблей, пляж «Яйца дракона», водопад, который падает прямо в море, и киты в Баренцевом море. Туристов много, но и выбор жилья и еды больше.",
+  sum:[["Дорога","Мурманск → Териберка, 130 км, 2,5–3 ч"],["Жильё","от 6 000 ₽ за сутки"],["Бюджет","от ~31 000 ₽ на человека без краба"],["Кому","первая поездка на Север, любой бюджет"]],
+  tag:"лучше всего — июнь–август",
+  days:[
+   {h:"Дорога и Старая Териберка",slots:[
+     ["08:00","Рейс Москва → Мурманск","Летит около 2,5 ч. Берите утренний, чтобы успеть засветло — хотя летом здесь и так светло круглые сутки.","от 4 300 ₽"],
+     ["11:00","Из аэропорта в Териберку","Такси или трансфер — 2,5–3 ч по тундре, от 3 000 до 7 000 ₽ за машину. Автобус № 241Э (~800 ₽) уходит в 09:00 от ж/д вокзала Мурманска и к утреннему рейсу не подходит; удобен, если ночуете в Мурманске.","от 3 000 ₽",["Аэропорт Мурманск"]],
+     ["14:30","Заселение и обед","Попробуйте треску, гребешки и икру морского ежа — их ловят тут же.","обед от 1 500 ₽"],
+     ["16:00","Старая Териберка","Песчаный пляж и траулер, которого шторм выбросил прямо на берег. Гулять по селу бесплатно.","",["Старая Териберка"]],
+     ["18:30","Кладбище кораблей","По дороге в Лодейное. Место, где снимали «Левиафана». На отливе корабли видно целиком — сверьтесь с таблицей приливов.","",["Кладбище кораблей Териберка"]],
+     ["20:30","Ужин","Столики вечером занимают — бронируйте днём.",""]
+   ],b:"Если рейс задержали, перенесите кладбище кораблей на утро третьего дня — оно рядом с дорогой обратно."},
+   {h:"Море и природный парк",slots:[
+     ["09:00","Выход в море к китам","2–3 часа: горбачи, косатки, птичьи базары на скалах. Одевайтесь теплее, чем кажется нужным.","от 3 600 ₽"],
+     ["12:30","Обед",""," "],
+     ["14:00","Природный парк «Териберка»","На машине до КПП у метеостанции, дальше пешком. Разрешение оформите заранее онлайн.","500 ₽",["Природный парк Териберка"]],
+     ["14:30","Малое Батарейское озеро и Батарейский водопад","Водопад падает прямо в Баренцево море — главная открытка Кольского.","",["Батарейский водопад"]],
+     ["16:00","Пляж «Яйца дракона»","Валуны, отполированные океаном до идеальных шаров. Рядом «Гнездо дракона». От КПП и обратно — 3–4 часа с остановками.","",["Пляж Яйца дракона Териберка"]],
+     ["20:00","Баня и ужин","Многие гостевые дома топят баню по запросу — договоритесь утром.",""]
+   ],b:"Если море закрыли из-за ветра, поменяйте дни: парк сегодня, море завтра утром."},
+   {h:"Краб или тундра, дорога домой",slots:[
+     ["08:00","Охота на камчатского краба","4 часа в море с лицензией, улов готовят на берегу. Дорого, но это главное приключение поездки.","от 32 000 ₽"],
+     ["08:00","…или тундра","Вместо краба — квадроциклы по сопкам или прогулка за ягодами (черника и брусника — в августе, морошка — в конце июля).",""],
+     ["13:00","Обед и выезд","Обратно в Мурманск 2,5–3 ч.",""],
+     ["18:00","Рейс домой","Берите вечерний: дорога иногда задерживается.",""]
+   ],b:"Если краба отменили из-за погоды, его можно попробовать в кафе — без охоты, но тоже впечатляет."}
+  ]
+ },
+ k:{
+  color:"#1F5E66",
+  title:"Китовый берег, 4 дня",
+  intro:"Арктик-отель из 15 экосфер на берегу Баренцева моря, на полуострове Средний. До ближайшего города 140 км, вокруг тундра, киты и ни одного случайного соседа. Сервис уровня четырёх звёзд, летом с полным пансионом.",
+  sum:[["Дорога","Мурманск → губа Малая Волоковая: до 4 ч на внедорожнике или ~40 мин на вертолёте"],["Жильё","от 77 696 ₽ за ночь, июнь–сентябрь с полным пансионом"],["Бюджет","от ~185 000 ₽ на человека при поездке вдвоём"],["Кому","тишина, комфорт и максимум природы без бытовых забот"]],
+  tag:"связи нет — и это плюс",
+  days:[
+   {h:"Дорога на край земли",slots:[
+     ["08:00","Рейс Москва → Мурманск","Около 2,5 ч в пути.","от 4 300 ₽"],
+     ["11:00","Трансфер к отелю","Лифтованный внедорожник по грунтовке через Титовку и единственный перевал на Средний — до 4 часов, до 3 человек в машине. Быстрее — вертолётом, около 40 минут.","от 60 000 ₽ за машину",["Старая Титовка"]],
+     ["15:30","Заселение в экосферу","Панорамное окно на губу Малая Волоковая, душ и туалет внутри.","",["69.647956, 31.818477"]],
+     ["19:00","Кедровая баня и фурако","Две бани и шесть бочек-фурако с видом на море. Летом в полночь светло, как днём.",""]
+   ],b:"Если рейс задержали, просите отель перенести трансфер: ехать по грунтовке ночью не стоит."},
+   {h:"Море",slots:[
+     ["09:00","Выход в Баренцево море","Поиск китов и косаток, рыбалка с борта. Сколько длится и что входит — уточняйте при бронировании.",""],
+     ["14:00","Обед в ресторане отеля","",""],
+     ["16:00","Прогулка по берегу","Тундра начинается прямо у экосфер: сопки, ручьи, в августе — ягоды под ногами.",""],
+     ["22:00","Белая ночь","Июнь–июль — полярный день. С сентября есть шанс на северное сияние прямо из окна.",""]
+   ],b:"Если море штормит, меняйте его местами с днём на квадроциклах."},
+   {h:"Краб и полуострова",slots:[
+     ["09:00","Охота на камчатского краба","Ближайшая разрешённая зона — у Долгой Щели. Улов готовят тут же.","",["Долгая Щель"]],
+     ["14:00","Квадроциклы, багги или джиппинг","По полуостровам Средний и Рыбачий: каменные сейды «Два брата», береговые батареи, мыс Кекурский.","",["Мыс Кекурский"]],
+     ["20:00","Ужин из улова","",""]
+   ],b:"На Рыбачий в плохую погоду дорогу размывает — лучше взять день у моря."},
+   {h:"Тундра и обратно",slots:[
+     ["09:00","Утро у моря","Ягоды, медленный завтрак, последние кадры.",""],
+     ["12:00","Трансфер в Мурманск","До 4 часов в пути.","от 60 000 ₽ за машину"],
+     ["19:00","Рейс домой","Берите рейс не раньше 18:00.",""]
+   ],b:""}
+  ]
+ }
+};
+
+const fmt = n => n.toLocaleString("ru-RU") + " ₽";
+let cur = "t";
+const routeEl = document.getElementById("route");
+
+function renderRoute(){
+  const r = R[cur];
+  document.documentElement.style.setProperty("--route", r.color);
+  const sum = r.sum.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join("");
+  const days = r.days.map((d,i)=>{
+    const slots = d.slots.map(([t,h,p,price,map])=>{
+      const m = map ? map.map(q=>` <a class="ymap" href="${ymap(q)}" target="_blank" rel="noopener">на карте</a>`).join("") : "";
+      const pr = price && price.trim() ? ` <span class="price">${price}</span>` : "";
+      return `<div class="slot"><time>${t}</time><div><b>${h}${pr}</b>${p?`<p>${p}${m}</p>`:(m?`<p>${m}</p>`:"")}</div></div>`;
+    }).join("");
+    const pb = d.b ? `<p class="planb"><strong>План Б.</strong> ${d.b}</p>` : "";
+    return `<article class="day"><h3><span>День ${i+1}</span>${d.h}</h3>${slots}${pb}</article>`;
+  }).join("");
+  routeEl.innerHTML = `<h2>${r.title}</h2><p>${r.intro}</p><dl class="sum">${sum}</dl><div class="tag">${r.tag}</div>${days}`;
+  routeEl.setAttribute("aria-labelledby", cur==="t"?"tab-t":"tab-k");
+}
+
+/* calculator */
+const st = {people:2,nights:2,opts:{}};
+const lim = {people:[1,8],nights:[1,6]};
+const CALC = {
+ t:{
+  nights:2,
+  opts:[
+   {id:"bus",type:"select",label:"Дорога Мурманск ↔ Териберка",choices:[["taxi","Такси или трансфер"],["bus","Автобус № 241Э"]]},
+   {id:"sea",type:"check",label:"Выход в море к китам",sub:"от 3 600 ₽ с человека",on:true},
+   {id:"park",type:"check",label:"Природный парк",sub:"500 ₽ с человека",on:true},
+   {id:"crab",type:"check",label:"Охота на краба",sub:"от 32 000 ₽ с человека",on:false}
+  ],
+  calc(p,n,o){
+   const L=[];
+   L.push(["Перелёт туда и обратно",8600*p]);
+   const cars=Math.ceil(p/4);
+   L.push(o.bus==="bus"?["Автобус туда и обратно",1600*p]:["Такси туда и обратно",6000*cars]);
+   L.push(["Жильё",6000*Math.ceil(p/2)*n]);
+   L.push(["Еда",3000*p*(n+1)]);
+   if(o.sea)L.push(["Море и киты",3600*p]);
+   if(o.park)L.push(["Природный парк",500*p]);
+   if(o.crab)L.push(["Охота на краба",32000*p]);
+   return L;
+  },
+  note:"Жильё — комната на двоих от 6 000 ₽ за сутки; еда — от 3 000 ₽ на человека в день; такси — от 3 000 ₽ за машину в одну сторону."
+ },
+ k:{
+  nights:3,
+  opts:[
+   {id:"heli",type:"select",label:"Трансфер",choices:[["car","Внедорожник, до 4 ч"],["heli","Вертолёт, ~40 мин"]]}
+  ],
+  calc(p,n,o){
+   const L=[];
+   L.push(["Перелёт туда и обратно",8600*p]);
+   if(o.heli==="heli")L.push(["Вертолёт — цену уточняйте в отеле",0]);
+   else L.push(["Внедорожник туда и обратно",60000*Math.ceil(p/3)*2]);
+   L.push(["Экосферы с пансионом",77696*Math.ceil(p/2)*n]);
+   return L;
+  },
+  note:"Экосфера — на двоих, от 77 696 ₽ за ночь, июнь–сентябрь с полным пансионом. Выходы в море, краб и квадроциклы оплачиваются по программе отеля — уточняйте при бронировании."
+ }
+};
+const optsEl=document.getElementById("calc-opts");
+function renderOpts(){
+  const c=CALC[cur]; st.opts={};
+  optsEl.innerHTML=c.opts.map(o=>{
+    if(o.type==="select"){st.opts[o.id]=o.choices[0][0];return `<div class="row"><label for="o-${o.id}">${o.label}</label><select id="o-${o.id}" data-o="${o.id}">${o.choices.map(([v,t])=>`<option value="${v}">${t}</option>`).join("")}</select></div>`;}
+    st.opts[o.id]=o.on;return `<label class="opt"><input type="checkbox" data-o="${o.id}" ${o.on?"checked":""}><span>${o.label}<small>${o.sub}</small></span></label>`;
+  }).join("");
+  document.getElementById("calc-note").textContent=c.note;
+}
+function renderCalc(){
+  const c=CALC[cur];
+  document.getElementById("people").textContent=st.people;
+  document.getElementById("nights").textContent=st.nights;
+  const L=c.calc(st.people,st.nights,st.opts);
+  const total=L.reduce((s,[,v])=>s+v,0);
+  document.getElementById("sum").textContent="от "+fmt(total);
+  document.getElementById("pp").textContent=st.people>1?`≈ ${fmt(Math.round(total/st.people/100)*100)} на человека`:"на одного";
+  document.getElementById("break").innerHTML=L.map(([k,v])=>`<li><span>${k}</span><span>${v?fmt(v):"—"}</span></li>`).join("");
+}
+document.querySelectorAll("[data-step]").forEach(b=>b.addEventListener("click",()=>{
+  const k=b.dataset.step,[mn,mx]=lim[k];st[k]=Math.min(mx,Math.max(mn,st[k]+(+b.dataset.d)));renderCalc();
+}));
+optsEl.addEventListener("change",e=>{const o=e.target.dataset.o;if(!o)return;st.opts[o]=e.target.type==="checkbox"?e.target.checked:e.target.value;renderCalc();});
+
+/* tabs */
+const tabs=[...document.querySelectorAll('[role="tab"]')];
+function select(r,focus){
+  cur=r;tabs.forEach(t=>{const on=t.dataset.r===r;t.setAttribute("aria-selected",on);t.tabIndex=on?0:-1;if(on&&focus)t.focus();});
+  st.nights=CALC[r].nights;renderRoute();renderOpts();renderCalc();
+  try{history.replaceState(null,"",r==="k"?"#kitovy":"#teriberka")}catch(e){}
+}
+tabs.forEach(t=>{
+  t.addEventListener("click",()=>{select(t.dataset.r);document.getElementById("route").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});});
+  t.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();select(cur==="t"?"k":"t",true);}});
+});
+
+/* season */
+const M=["я","ф","м","а","м","и","и","а","с","о","н","д"];
+const S=[
+ ["Киты","#2FA7A0",[6,7,8,9],[6,7]],
+ ["Полярный день","#E0A458",[5,6,7],[6]],
+ ["Ягоды","#C8553D",[7,8,9],[8]],
+ ["Северное сияние","#7A9E7E",[9,10,11,12,1,2,3,4],[10,2,3]],
+ ["Метели на дороге","#9AA3B5",[10,11,12,1,2,3,4,5],[]]
+];
+let html='<span></span>'+M.map(m=>`<span class="m">${m}</span>`).join("");
+S.forEach(([lab,c,on,best])=>{html+=`<span class="lab">${lab}</span>`+M.map((_,i)=>{const mo=i+1;const cls=best.includes(mo)?"c best":on.includes(mo)?"c on":"c";return `<span class="${cls}" style="--c:${c}" title="${lab}"></span>`;}).join("");});
+document.getElementById("cal").innerHTML=html;
+
+/* checklist */
+const ITEMS=["Паспорт (и для Китового берега — разрешение на въезд в парк)","Ветровка-мембрана и непромокаемые штаны","Тёплый слой: флис или пуховик, даже в июле","Шапка, перчатки, бафф","Треккинговые ботинки, которые не промокают","Маска для сна — летом не темнеет","Репеллент от комаров и мошки","Повербанк и офлайн-карты","Наличные","Таблетки от укачивания для моря","Солнцезащитные очки","Термос"];
+const KEY="kola-check-v1";let saved={};
+try{saved=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){saved={}}
+document.getElementById("check").innerHTML=ITEMS.map((t,i)=>`<li><label><input type="checkbox" data-i="${i}" ${saved[i]?"checked":""}><span>${t}</span></label></li>`).join("");
+document.getElementById("check").addEventListener("change",e=>{const i=e.target.dataset.i;if(i==null)return;saved[i]=e.target.checked;try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(err){}});
+
+select(location.hash==="#kitovy"?"k":"t");
+})();
+</script>
+</body>
+</html>
